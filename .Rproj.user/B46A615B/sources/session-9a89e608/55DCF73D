@@ -1,9 +1,9 @@
 {
     "id": "55DCF73D",
-    "path": "C:/Users/berta/OneDrive/Escritorio/UAH/Tarea-1-R/Trabajo 1.qmd",
-    "project_path": "Trabajo 1.qmd",
+    "path": "C:/Users/berta/OneDrive/Escritorio/UAH/Tarea-1-R/trabajo1.qmd",
+    "project_path": "trabajo1.qmd",
     "type": "quarto_markdown",
-    "hash": "0",
+    "hash": "1821150462",
     "contents": "",
     "dirty": false,
     "created": 1710276274316.0,
@@ -22,11 +22,11 @@
         "rmdVisualModeLocation": "2:5.8333330154418945"
     },
     "folds": "",
-    "lastKnownWriteTime": 1710276600,
+    "lastKnownWriteTime": 1710277766,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1710276600551,
+    "last_content_update": 1710277766202,
     "read_only": false,
     "read_only_alternatives": []
 }
