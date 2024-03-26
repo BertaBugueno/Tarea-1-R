@@ -1,10 +1,16 @@
 ---
-title: "Trabajo 1"
+title: "Ranalisis"
 format: html
 editor: visual
+bibliography: Ranalisis.bib
+link-citations:true
 ---
 
 ## Quarto
+
+# TRABAJO 1
+
+\[
 
 Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
 
