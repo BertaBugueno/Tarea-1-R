@@ -1,0 +1,174 @@
+---
+title: "Trabajo 2"
+format: html
+editor: visual
+Bibliography: Estratificacion social (brechas de pobreza)
+Link-citations: true
+---
+
+## Trabajo 2
+
+## **La pobreza extrema y el desarrollo humano**
+
+## 
+
+Por Berta Bugueño
+
+Durante los últimos años se ha visto una disminución de la pobreza en Chile, especialmente en las zonas rurales del país, la multidimencionalidad que influye en este acontecer sociológico es, desde el punto de vista de la ética social cristiana donde *"se subraya la relevancia de realizar evaluaciones cualitativas sistemáticas sobre la pobreza y el desarrollo humano \[...\] La pobreza y el desarrollo humano son fenómenos sociales complejos"*[@daherEvaluacionCualitativaSistematica2019]
+
+Vamos a estudiar que nuevos trabajos y oportunidades de acceso a tecnologías, conectividades, educación, espacios públicos y vivienda han incidido para que la brecha de la pobreza en las zonas rurales haya variado y disminuido considerablemente desde 1990, según un estudio de Pérez, la distancia al mercado incide directamente sobre la pobreza de las personas, la movilidad influye directamente. [@perezEfectoDistanciaMercado2013].
+
+La mayoría de las zonas rurales en Chile tiene muy mala conectividad, en las comunas rurales no existe el Metro, los otros medios de transportes son con frecuencias, en su mayoría muy distantes, sus máquinas antiguas, así mismo la educación es un factor preponderante para salir de la pobreza, en muchos casos en los sectores donde hay pobreza extrema, existe sólo educación municipalizada y no existe ninguna entidad de educación superior.
+
+Por otra parte el acceso a la vivienda también es un tema relevante y es uno de los factores que mide la pobreza, en algunos sectores la denominación de suelo impide que se realicen proyectos habitacionales.
+
+Tambien es atendible el como perciben las personas la desigualdad, que según Paradox *"Las investigaciones sugieren que los ciudadanos de las sociedades desiguales están menos preocupados que las sociedades más igualitarias"*[@mijsParadoxInequalityIncome2021a]
+
+Un Factor muy importante es la salud mental, Vera-Bachmann establece que *"estudios constatan que la situación social de pobreza socioeconómica es un factor de riesgo psicosocial en general y de salud mental en particular, que afecta de manera especial a los sectores rurales"* tambien explica la relación de hogares de extrema pobreza con la cantidad de niños, existiendo una relación entre estas variables, así mismo en su artículo establece que niños y jóvenes abandonan los estudios e ingresan prematuramente al mundo del rabajo [@bachmannResiliencePovertyRurality2015]
+
+Se espera dilucidar que, a medida que aumentan las oportunidades de acceso a bienes y servicios, especialmente la educacion, que mejoran la calidad de vida en las zonas rurales, disminuya la pobreza de sus habitantes. Des de el punto de vista teológico se puede observar que:
+
+"*considerando las múltiples dimensiones involucradas, así como el horizonte humanizador y del bien común. Se destaca la necesidad de realizar evaluaciones cualitativas sistemáticas a nivel nacional e internacional que complementen las mediciones cuantitativas, presentando sus aportes y consideraciones metodológicas y éticas. Finalmente, abordar las implicaciones y conexiones entre estas nociones, así como los desafíos conceptuales y metodológicos para la evaluación de la pobreza y el desarrollo humano en el marco de la Ética Social Cristiana*"
+
+[@daherEvaluacionCualitativaSistematica201]
+
+# ANÁLISIS DESCRIPTIVO
+
+# Cargar paquetes
+
+```{r}
+pacman::p_load(sjlabelled,
+               dplyr, #Manipulacion de datos
+              stargazer, #Tablas
+              sjmisc, # Tablas
+              summarytools, # Tablas
+              kableExtra, #Tablas
+              sjPlot, #Tablas y gráficos
+              corrplot, # Correlaciones
+              sessioninfo, # Información de la sesión de trabajo
+              ggplot2) # Para la mayoría de los gráficos
+```
+
+# Cargar base de datos
+
+```{r}
+load("imput/Latinobarometro_2023_Esp_Rdata_v1_0.rdata") #Cargar base de 
+
+```
+
+```{r}
+options(scipen=999) # valores sin notación científica
+
+dim(Latinobarometro_2023_Esp_v1_0) # dimension de la base
+```
+
+```{r}
+latinobarometro <- select(Latinobarometro_2023_Esp_v1_0, REEEDUC.1, idenpa, S5)
+
+
+latinobarometro <- filter(latinobarometro, idenpa=="152")
+
+```
+
+\
+
+```{r}Clase}
+context_data <- wvs %>% group_by(B_COUNTRY) %>% # Agrupar por país
+  summarise(gdp = mean(GDPpercap1, na.rm = TRUE), # Promedio de GDP per capita
+         life_exp = mean(lifeexpect, na.rm = TRUE), # Promedio esperanza de vida
+         gini = mean(giniWB, na.rm = TRUE)) %>%  # Promedio gini
+  rename(idenpa=B_COUNTRY) # Para poder vincular ambas bases, es necesario que la variable de identificación se llamen igual
+context_data$idenpa <- as.numeric(context_data$idenpa) # Como era categórica, la dejamos numérica
+
+proc_data <- proc_data %>% group_by(idenpa) %>%  # agrupamos por país
+  summarise(promedio = mean(conf_inst, na.rm = TRUE)) # promedio de confianza en instituciones por país
+```
+
+# Unir base de datos
+
+```{r}
+data <- merge(proc_data, context_data, by="idenpa")
+```
+
+```{r}de la clase}
+data <- data %>%
+  mutate(idenpa = as.character(idenpa)) %>%
+  mutate(idenpa = case_when(
+    idenpa == "32" ~ "Argentina",
+    idenpa == "68" ~ "Bolivia",
+    idenpa == "76" ~ "Brasil",
+    idenpa == "152" ~ "Chile",
+    idenpa == "170" ~ "Colombia",
+    idenpa == "188" ~ "Costa Rica",
+    idenpa == "214" ~ "Cuba",
+    idenpa == "218" ~ "República Dominicana",
+    idenpa == "222" ~ "Ecuador",
+    idenpa == "320" ~ "El Salvador",
+    idenpa == "340" ~ "Guatemala",
+    idenpa == "484" ~ "Honduras",
+    idenpa == "558" ~ "México",
+    idenpa == "591" ~ "Nicaragua",
+    idenpa == "600" ~ "Panamá",
+    idenpa == "604" ~ "Paraguay",
+    idenpa == "858" ~ "Uruguay",
+    idenpa == "862" ~ "Venezuela"))
+
+data$gdp <- as.numeric(data$gdp)
+data$gdp[data$gdp==0] <- NA
+data <- na.omit(data)
+```
+
+# Visualizaciones
+
+```{r}
+#| label: tbl-sjmisc
+#| tbl-cap: “Descriptivos con sjmisc”
+sjmisc::descr(data,
+      show = c("label","range", "mean", "sd", "NA.prc", "n"))%>% # Selecciona estadísticos
+      kable(.,"markdown") # Esto es para que se vea bien en quarto
+```
+
+y así referenciamos @tbl-sjmisc
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+\
+
+# Otra opción de tabla
+
+```{r}
+view(dfSummary(data, headings=FALSE))
+```
+
+# Gráficos
+
+#Para el gráfico N° 2 haremos un #label:"condiferente nombre" y "fig-cap:"titulo del gráfico diferente"
+
+```{r}
+#| label: fig-gdp
+#| fig-cap: “PIB segun pais”
+
+
+ggplot(data, aes(x = idenpa, y = gdp)) +
+  geom_point() +
+  labs(x = "País", y = "Gdp") +
+  theme_minimal()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+Después para referenciar el gráfico debemos usar esto: @fig-gdp\
+
+```{r}
+data %>%
+  ggplot(aes(x = gdp, y = promedio, label = idenpa)) +
+  geom_point() +
+  geom_text(vjust = -0.5) +
+  labs(x = "GDP", y = "Promedio") +
+  theme_bw()wq
+```

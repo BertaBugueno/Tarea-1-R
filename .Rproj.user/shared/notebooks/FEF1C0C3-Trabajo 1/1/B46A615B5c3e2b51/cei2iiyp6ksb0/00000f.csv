@@ -1,0 +1,6 @@
+"0","load(url(""https://github.com/Kevin-carrasco/R-data-analisis/raw/main/files/data/latinobarometro_total.RData"")) #Cargar base de datos
+"
+"2","Warning: URL 'https://github.com/Kevin-carrasco/R-data-analisis/raw/main/files/data/latinobarometro_total.RData': status was 'Couldn't resolve host name'"
+"2","Error in load(url(""https://github.com/Kevin-carrasco/R-data-analisis/raw/main/files/data/latinobarometro_total.RData"")) : 
+  cannot open the connection to 'https://github.com/Kevin-carrasco/R-data-analisis/raw/main/files/data/latinobarometro_total.RData'
+"

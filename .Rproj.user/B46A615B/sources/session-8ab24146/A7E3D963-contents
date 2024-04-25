@@ -1,0 +1,119 @@
+
+Tarea 2
+
+# Cargar paquetes
+
+pacman::p_load(sjlabelled,
+               dplyr, #Manipulacion de datos
+               stargazer, #Tablas
+               sjmisc, # Tablas
+               summarytools, # Tablas
+               kableExtra, #Tablas
+               sjPlot, #Tablas y gráficos
+               corrplot, # Correlaciones
+               sessioninfo, # Información de la sesión de trabajo
+               ggplot2, haven, car) # Para la mayoría de los gráficos
+
+# Cargar base de datos
+
+load("Imput/casen2022.RData")
+
+#selección de variables
+
+find_var(data = casen22, "ingreso")
+
+proc_data <- casen22 %>% select(e6a_no_asiste, # nivel educacional
+                                y1, #ingreso mensual
+                                region, # region
+                                sexo) # sexo
+
+# Comprobar
+names(proc_data)
+
+sjlabelled::get_label(proc_data)
+
+#Recodificación de variables
+
+#Nivel Educaional#
+
+frq(proc_data$e6a_no_asiste) #muestra cuadro de escolaridad#
+#####
+
+proc_data$e6a_no_asiste <- as.factor(proc_data$e6a_no_asiste)
+
+proc_data$e6a_no_asiste <-recode(proc_data$e6a_no_asiste, "1=1; 2=1; 3=1; 4=1; 5=1; 6=7; 7=7; 8=8; 9=8; 10=8; 11=8; 12=13; 13=13; 14=13; 15=13")
+frq(proc_data$e6a_no_asiste)
+
+#cambio de nombre de la variable
+proc_data <- proc_data %>% rename("nivel_educacional"=e6a_no_asiste)
+
+proc_data$nivel_educacional <- set_label(x = proc_data$nivel_educacional,label = "Nivel educacional alcanzado")
+
+proc_data$nivel_educacional <- factor(proc_data$nivel_educacional,
+                                      labels = c("analfabetos", "educación básica", "educación media", "estudios superiores"),
+                                      levels = c(1, 7, 8, 13))
+
+frq(proc_data$nivel_educacional)
+
+proc_data <- proc_data %>% rename("ingresos"=y1)
+
+proc_data$ingresos <- set_label(x = proc_data$ingresos,label = "Ingresos")
+
+frq(proc_data$ingresos)
+
+summary(proc_data$ingresos)
+
+summary(proc_data$ingresos)
+
+
+
+find_var(data = casen22, "ingreso")
+
+proc_data <- casen22 %>% select(e6a_no_asiste, # nivel educacional
+                                y1, #ingreso mensual
+                                region, # region
+                                sexo) # sexo
+
+# Comprobar
+names(proc_data)
+
+sjlabelled::get_label(proc_data)
+
+#Recodificación de variables
+
+#Nivel Educaional#
+
+frq(proc_data$e6a_no_asiste) #muestra cuadro de escolaridad#
+#####
+
+proc_data$e6a_no_asiste <- as.factor(proc_data$e6a_no_asiste)
+
+proc_data$e6a_no_asiste <-recode(proc_data$e6a_no_asiste, "1=1; 2=1; 3=1; 4=1; 5=1; 6=7; 7=7; 8=8; 9=8; 10=8; 11=8; 12=13; 13=13; 14=13; 15=13")
+frq(proc_data$e6a_no_asiste)
+
+#cambio de nombre de la variable
+proc_data <- proc_data %>% rename("nivel_educacional"=e6a_no_asiste)
+
+proc_data$nivel_educacional <- set_label(x = proc_data$nivel_educacional,label = "Nivel educacional alcanzado")
+
+# Se recodifica el nivel educacional
+#1 para analfabetos, 7 educación básica, 8 educación media y 13 estudios suoeriores
+proc_data$nivel_educacional <- factor(proc_data$nivel_educacional,
+                                      labels = c("analfabetos", "educación básica", "educación media", "estudios superiores"),
+                                      levels = c(1, 7, 8, 13))
+
+frq(proc_data$nivel_educacional)
+
+proc_data <- proc_data %>% rename("ingresos"=y1)
+
+proc_data$ingresos <- set_label(x = proc_data$ingresos,label = "Ingresos")
+
+frq(proc_data$ingresos)
+
+summary(proc_data$ingresos)
+
+summary(proc_data$ingresos)
+
+
+
+ 

@@ -1,0 +1,166 @@
+
+
+#   ╔═══════════════════════════════════════════╗
+#   ║                                           ║
+#   ║       * Taller 4: Regresion lineal        ║
+#   ║    multiple, introduccion a supuestos*    ║
+#   ║                                           ║
+#   ║              Estadística III              ║
+#   ║                                           ║
+#   ║                                           ║
+#   ║   -Patricio Alarcón                       ║
+#   ║   -Lucas Galanakis         24/04/2024     ║
+#   ║                                           ║
+#   ╚═══════════════════════════════════════════╝
+
+
+
+# Consideraciones --------------------------------------------------------------
+
+  # Los # sirven para realizar anotaciones en el script. De otra forma,
+  # el programa identifica como código el texto.
+
+
+
+# Instalar y cargar paquetes ---------------------------------------------------
+
+install.packages(haven, texreg, corrplot, coefplot, ggplot2, sjPlot,
+                 summarytools, dplyr, lmtest, sandwich)
+
+library(haven)
+library(texreg)
+library(corrplot)
+library(ggplot2)
+library(sjPlot)
+library(summarytools)
+library(dplyr)
+
+
+
+# Preparar y revisar los datos -------------------------------------------------
+
+  # Base de datos Casen reducida (esta vez contiene 5 variables)
+base <- read_sav("Input/Casen.sav")
+
+  # Clase de los datos
+class(base$yautcor)
+
+class(base$esc)
+
+class(base$edad)
+
+class(as_factor(base$sexo))
+
+  # Resumen de los datos
+print(dfSummary(base[,c("yautcor","esc","edad","sexo")], headings = FALSE, method = "render"))
+
+
+
+# Analisis de correlaciones ----------------------------------------------------
+
+
+## Matriz de correlaciones
+
+  #La opción use="complete.obs" se utiliza para omitir cualquier fila que 
+  #contenga valores faltantes (NA).
+cor(base[,c("yautcor","esc","edad","sexo")], use="complete.obs")
+
+
+## Graficar la matriz
+
+  # Primero guardamos la matriz
+mc <- cor(base[,c("yautcor","esc","edad","sexo")], use="complete.obs")
+
+  # Luego graficamos el objeto guardado (mc)
+corrplot(mc, method = 'number', type = 'upper')
+
+
+## Grafico de dispersion en torno a la recta
+
+Grafico <- ggplot(base, aes(x=esc, y=log(yautcor))) +  #Datos a graficar
+  geom_point() +                                       #Grafico de puntos
+  geom_smooth(method="lm", se=FALSE)                   #Recta de regresion
+
+  # Visualizamos (ojito que se demora bastante, son muchos datos)
+Grafico
+
+
+
+# Estimar un modelo de regresion lineal ----------------------------------------
+
+
+## Modelo basico de RStudio
+
+# Creamos y guardamos los modelos
+
+  # Estimamos los tres modelos por separado
+simple1 <- lm(yautcor ~ esc,data = base)
+simple2 <- lm(yautcor ~ edad,data = base)
+simple3 <- lm(yautcor ~ as_factor(sexo),data = base)
+
+
+## Revisar los resultados usando el paquete texreg
+screenreg(list(simple1, simple2, simple3), 
+          custom.coef.names = c("Intercepto", "Escolaridad", "Edad", "Sexo (ref. Hombre)"))
+
+
+
+# Estimar los modelos multiples ------------------------------------------------
+
+  # Modelo simple que mantuvimos
+multiple1 <- lm(yautcor ~ esc, data = base)
+
+  # Modelo multiple
+multiple2 <- lm(yautcor ~ esc + edad + as_factor(sexo), data = base)
+
+  # Modelo multiple con factor de expansion
+multiple3 <- lm(yautcor ~ esc + edad + as_factor(sexo), data = base, weights = expr)
+
+
+## Revisar los modelos para comparar
+screenreg(list(multiple1, multiple2, multiple3), 
+          custom.coef.names = c("Intercepto", "Escolaridad", "Edad", "Sexo (ref. Hombre)"))
+
+
+
+# Revisar la significacion estadistica -----------------------------------------
+
+  # El summary nos permite revisar algunos estadisticos de interes
+summary(multiple3)
+
+  # Graficar los residuos
+hist(multiple3$residuals, breaks = 100)
+
+
+
+# Graficar un modelo de regresion con el paquete sjPlot ------------------------
+
+## Grafico de coefiencientes (IMPORTANTE)
+plot_model(multiple3)
+
+
+
+# Prediccion de valores --------------------------------------------------------
+
+## Ejercicio 1
+
+  #Queremos predecir el valor de una persona con 17 años de escolaridad, 
+  #con 37 años y de sexo masculino.
+
+  #Recordemos que RStudio es una calculadora gigante
+
+(-818.127) + (108402 * 17) + (7631 * 37) + (-268941 * 0)
+
+  #Resultado: $
+
+
+## Ejercicio 2
+
+#Queremos predecir el valor de una persona con 12 años de escolaridad, 
+#con 51 años y de sexo femenino
+
+
+
+  #Resultado: $
+
+
